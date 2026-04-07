@@ -1,39 +1,432 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GTXNESIA News Studio - V6 Fix Scaling</title>
+    <title>GTXNESIA News Studio - V10 Grasstrack Edition</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@900&family=Rajdhani:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        :root {
+            --accent: #ff6b00; /* KTM Orange Default */
+            --bg-glass: rgba(15, 10, 5, 0.92);
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020617;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0c0a09;
             color: #f8fafc;
-            padding: 0;
             margin: 0;
             overflow-x: hidden;
         }
 
-        /* Area Preview Sticky (Freeze di atas) */
         .preview-section {
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: #020617;
+            background: #0c0a09;
             padding: 10px;
-            border-bottom: 1px solid #1e293b;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border-bottom: 3px solid var(--accent);
         }
 
-        /* Container Pembungkus agar Scaling Tidak Memotong Gambar */
         #preview-container {
             position: relative;
             width: 100%;
-            max-width: 600px; /* Batas lebar di desktop agar tidak terlalu besar */
+            max-width: 600px;
             margin: 0 auto;
+            background: #000;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        #render-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            background: #000;
+            transform-origin: top left;
+        }
+
+        .bg-photo {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            filter: saturate(1.2);
+        }
+
+        /* --- GRASSTRACK OVERLAY DESIGN --- */
+        .news-overlay {
+            position: relative;
+            z-index: 10;
+            display: none; 
+            width: fit-content;    
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
+            /* Bentuk asimetris seperti plat nomor motor trail */
+            clip-path: polygon(
+                0 0, 95% 0, 100% 15%, 100% 100%, 5% 100%, 0 85%
+            );
+        }
+
+        /* Mud Splatter Pattern (Dekorasi) */
+        .mud-pattern {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            z-index: 2;
+        }
+
+        /* Tire Track Decor */
+        .tire-track {
+            position: absolute;
+            right: 0; top: 0; width: 40px; height: 100%;
+            background: repeating-linear-gradient(45deg, var(--accent) 0%, var(--accent) 10px, transparent 10px, transparent 20px);
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        /* Suspension Brackets */
+        .bracket-gtx {
+            position: absolute;
+            width: 10px; height: 40px;
+            background: var(--accent);
+            z-index: 15;
+            box-shadow: 0 0 15px var(--accent);
+        }
+        .b-left { left: 0; top: 20%; border-radius: 0 5px 5px 0; }
+        .b-right { right: 0; bottom: 20%; border-radius: 5px 0 0 5px; }
+
+        .headline-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-style: italic;
+            margin: 0;
+            line-height: 0.85;
+            white-space: pre-wrap;
+            display: block;
+            position: relative;
+            z-index: 10;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+        }
+
+        .branding-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 4px solid var(--accent);
+            padding-top: 15px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .brand-name { 
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900; 
+            font-size: 22px; 
+            color: #fff;
+            font-style: italic;
+        }
+
+        .category-tag {
+            font-size: 10px;
+            font-weight: 900;
+            color: #000;
+            background: #fff;
+            padding: 2px 8px;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+        }
+
+        /* Floating Logo Grasstrack Style */
+        .logo-layer {
+            position: absolute;
+            z-index: 20;
+            display: none;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            border-bottom: 5px solid var(--accent);
+            transform: rotate(-2deg);
+        }
+        .logo-layer::after {
+            content: "MUD & GLORY";
+            position: absolute;
+            bottom: -18px; left: 0;
+            font-size: 8px; font-weight: 900; color: var(--accent);
+        }
+
+        /* UI Controls */
+        .control-section { padding: 15px; padding-bottom: 120px; }
+        .card-control { background: #1c1917; border-radius: 12px; padding: 18px; border: 1px solid #44403c; }
+        .label-ui { font-size: 10px; font-weight: 800; color: #a8a29e; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        
+        .theme-select {
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: 0.2s;
+        }
+        .theme-select.active { border-color: white; transform: scale(1.2); }
+
+        .align-btn { background: #44403c; border: none; color: white; padding: 10px; border-radius: 4px; font-size: 10px; flex: 1; font-weight: 900; }
+        .align-btn.active { background: var(--accent); color: #000; }
+
+        /* GTX Themes */
+        .theme-ktm { --accent: #ff6b00; background: rgba(20, 10, 0, 0.95); }
+        .theme-kawasaki { --accent: #28ff00; background: rgba(5, 20, 0, 0.95); }
+        .theme-yamaha { --accent: #0066ff; background: rgba(0, 10, 30, 0.95); }
+        .theme-honda { --accent: #ff0000; background: rgba(20, 0, 0, 0.95); }
+
+        .save-container {
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px;
+            background: linear-gradient(transparent, #0c0a09 50%); z-index: 1001;
+        }
+        .btn-save-main {
+            background: var(--accent); color: #000; font-weight: 900; border-radius: 5px; padding: 18px; width: 100%; border: none;
+            font-family: 'Orbitron'; letter-spacing: 1px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-app">
+    <div class="preview-section">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-bold" style="font-size: 11px; color: var(--accent); font-family: 'Orbitron';">GTXNESIA // PRO-GTX SYSTEM</span>
+            <span id="info-status" class="text-secondary" style="font-size: 9px; font-weight: 800;">DIRT MODE: ON</span>
+        </div>
+        <div id="preview-container">
+            <div id="render-canvas">
+                <img id="view-bg" class="bg-photo" src="" style="display:none;">
+                
+                <div id="view-logo-container" class="logo-layer">
+                    <img id="view-logo-img" src="" style="height: 100%; width: auto;">
+                </div>
+
+                <div id="view-box" class="news-overlay theme-ktm">
+                    <div class="mud-pattern"></div>
+                    <div class="tire-track"></div>
+                    
+                    <div class="bracket-gtx b-left"></div>
+                    <div class="bracket-gtx b-right"></div>
+                    
+                    <h2 id="view-headline" class="headline-text"></h2>
+                    
+                    <div id="view-branding" class="branding-row">
+                        <span class="brand-name">GTXNESIA.ID</span>
+                        <div class="category-tag">GRASSTRACK</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="control-section">
+        <div class="card-control">
+            <div class="mb-3">
+                <label class="label-ui">Media Transmisi</label>
+                <div class="row g-2">
+                    <div class="col-6"><button onclick="document.getElementById('in-bg').click()" class="btn btn-warning btn-sm w-100 fw-bold">FOTO BALAP</button></div>
+                    <div class="col-6"><button onclick="document.getElementById('in-logo').click()" class="btn btn-outline-light btn-sm w-100 fw-bold">LOGO TEAM</button></div>
+                    <input type="file" id="in-bg" accept="image/*" class="d-none">
+                    <input type="file" id="in-logo" accept="image/*" class="d-none">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="label-ui">Headline Berita</label>
+                <textarea id="in-text" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Contoh: RIZKY HK DOMINASI KELAS BEBEK MODIF..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="label-ui">Warna Pabrikan / Team</label>
+                <div class="d-flex gap-3 justify-content-center mb-3">
+                    <div onclick="changeTheme('ktm')" id="dot-ktm" class="theme-select active" style="background:#ff6b00" title="KTM/Orange"></div>
+                    <div onclick="changeTheme('kawasaki')" id="dot-kawasaki" class="theme-select" style="background:#28ff00" title="Kawasaki/Green"></div>
+                    <div onclick="changeTheme('yamaha')" id="dot-yamaha" class="theme-select" style="background:#0066ff" title="Yamaha/Blue"></div>
+                    <div onclick="changeTheme('honda')" id="dot-honda" class="theme-select" style="background:#ff0000" title="Honda/Red"></div>
+                </div>
+                <div class="d-flex gap-1">
+                    <button onclick="setAlign('flex-start')" id="btn-left" class="align-btn active">KIRI</button>
+                    <button onclick="setAlign('center')" id="btn-center" class="align-btn">TENGAH</button>
+                    <button onclick="setAlign('flex-end')" id="btn-right" class="align-btn">KANAN</button>
+                </div>
+            </div>
+
+            <div class="row g-3 pt-2 border-top border-secondary">
+                <div class="col-6">
+                    <label class="label-ui">Font Size (<span id="txt-size">75</span>)</label>
+                    <input type="range" id="rng-size" min="20" max="250" value="75" class="form-range">
+                </div>
+                <div class="col-6">
+                    <label class="label-ui">Lebar Box (<span id="txt-width">90</span>%)</label>
+                    <input type="range" id="rng-width" min="10" max="100" value="90" class="form-range">
+                </div>
+                <div class="col-6">
+                    <label class="label-ui">Posisi Bawah (<span id="txt-bottom">60</span>)</label>
+                    <input type="range" id="rng-bottom" min="0" max="500" value="60" class="form-range">
+                </div>
+                <div class="col-6">
+                    <label class="label-ui">Samping (<span id="txt-side">40</span>)</label>
+                    <input type="range" id="rng-side" min="0" max="500" value="40" class="form-range">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-container">
+        <button onclick="saveResult()" id="btn-save" class="btn-save-main">CETAK GAMBAR GTX</button>
+    </div>
+</div>
+
+<script>
+    let canvasW = 1080, canvasH = 1080;
+    let selectedTheme = 'ktm';
+    let currentAlign = 'flex-start';
+
+    document.getElementById('in-bg').onchange = handleUpload;
+    document.getElementById('in-logo').onchange = handleLogo;
+
+    function handleUpload(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                canvasW = this.width; canvasH = this.height;
+                const canvas = document.getElementById('render-canvas');
+                canvas.style.width = canvasW + "px";
+                canvas.style.height = canvasH + "px";
+                document.getElementById('view-bg').src = event.target.result;
+                document.getElementById('view-bg').style.display = 'block';
+                refreshLayout();
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function handleLogo(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('view-logo-img').src = event.target.result;
+            document.getElementById('view-logo-container').style.display = 'block';
+            refreshLayout();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function setAlign(val) {
+        currentAlign = val;
+        document.querySelectorAll('.align-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`btn-${val === 'flex-start' ? 'left' : val === 'center' ? 'center' : 'right'}`).classList.add('active');
+        refreshLayout();
+    }
+
+    function changeTheme(t) {
+        selectedTheme = t;
+        const themes = ['ktm', 'kawasaki', 'yamaha', 'honda'];
+        themes.forEach(item => {
+            document.getElementById('view-box').classList.remove(`theme-${item}`);
+            document.getElementById(`dot-${item}`).classList.remove('active');
+        });
+        document.getElementById('view-box').classList.add(`theme-${t}`);
+        document.getElementById(`dot-${t}`).classList.add('active');
+        
+        const colors = { ktm: '#ff6b00', kawasaki: '#28ff00', yamaha: '#0066ff', honda: '#ff0000' };
+        document.documentElement.style.setProperty('--accent', colors[t]);
+        refreshLayout();
+    }
+
+    function refreshLayout() {
+        const text = document.getElementById('in-text').value.toUpperCase();
+        const fontSize = document.getElementById('rng-size').value;
+        const side = parseInt(document.getElementById('rng-side').value);
+        const bottom = parseInt(document.getElementById('rng-bottom').value);
+        const width = document.getElementById('rng-width').value;
+
+        document.getElementById('txt-size').innerText = fontSize;
+        document.getElementById('txt-side').innerText = side;
+        document.getElementById('txt-bottom').innerText = bottom;
+        document.getElementById('txt-width').innerText = width;
+
+        const box = document.getElementById('view-box');
+        const canvas = document.getElementById('render-canvas');
+        const headline = document.getElementById('view-headline');
+        const branding = document.getElementById('view-branding');
+
+        box.style.display = text.trim() === "" ? "none" : "block";
+        headline.innerText = text;
+        headline.style.fontSize = fontSize + "px";
+        
+        canvas.style.alignItems = currentAlign;
+        box.style.maxWidth = width + "%";
+        box.style.padding = (canvasH * 0.05) + "px " + (canvasH * 0.07) + "px";
+
+        if(currentAlign === 'center') {
+            headline.style.textAlign = 'center';
+            branding.style.justifyContent = 'center';
+            box.style.margin = `0 0 ${bottom}px 0`;
+        } else if(currentAlign === 'flex-end') {
+            headline.style.textAlign = 'right';
+            branding.style.justifyContent = 'flex-end';
+            box.style.margin = `0 ${side}px ${bottom}px 0`;
+        } else {
+            headline.style.textAlign = 'left';
+            branding.style.justifyContent = 'flex-start';
+            box.style.margin = `0 0 ${bottom}px ${side}px`;
+        }
+
+        const logo = document.getElementById('view-logo-container');
+        logo.style.height = (canvasH * 0.1) + "px";
+        logo.style.top = (canvasH * 0.05) + "px";
+        logo.style.left = (canvasH * 0.05) + "px";
+
+        const container = document.getElementById('preview-container');
+        const scale = container.offsetWidth / canvasW;
+        canvas.style.transform = `scale(${scale})`;
+        container.style.height = (canvasH * scale) + "px";
+    }
+
+    function saveResult() {
+        const canvas = document.getElementById('render-canvas');
+        if(!document.getElementById('view-bg').src) return;
+        const btn = document.getElementById('btn-save');
+        btn.innerText = "CAPTURING DIRT..."; btn.disabled = true;
+        const originalTransform = canvas.style.transform;
+        canvas.style.transform = "none";
+
+        html2canvas(canvas, {
+            width: canvasW, height: canvasH, scale: 1, useCORS: true
+        }).then(cv => {
+            const link = document.createElement('a');
+            link.download = `GTXNESIA_DIRT_${Date.now()}.png`;
+            link.href = cv.toDataURL();
+            link.click();
+            canvas.style.transform = originalTransform;
+            btn.innerText = "CETAK GAMBAR GTX"; btn.disabled = false;
+        });
+    }
+
+    document.querySelectorAll('input, textarea').forEach(el => el.oninput = refreshLayout);
+    window.onresize = refreshLayout;
+    refreshLayout();
+</script>
+</body>
+</html>
+
+```
             background: #000;
             border-radius: 8px;
             overflow: hidden; /* Potong overflow hanya di level container luar */
