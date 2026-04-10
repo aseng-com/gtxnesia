@@ -2,19 +2,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Box Maker Pro - Bootstrap Responsive</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>News Box Maker Pro - Purple Edition</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Oswald:wght@700&family=Roboto+Condensed:wght@700&display=swap');
 
+        /* Warna Utama Tema Ungu */
         :root {
-            --primary-color: #0d6efd;
+            --primary-color: #6f42c1; /* Purple */
+            --primary-hover: #59359a;
+            --bg-light: #f8f7fa;
+            --dark-purple: #2d1b4e;
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #f0f2f5;
+            background-color: var(--bg-light);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -36,12 +39,12 @@
             .sidebar {
                 width: 400px;
                 overflow-y: auto;
-                border-right: 1px solid #dee2e6;
+                border-right: 1px solid #e1ddec;
                 background: white;
             }
             .preview-area {
                 flex: 1;
-                background: #1a1d20;
+                background: #120d1d; /* Dark Purple Black */
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -50,7 +53,6 @@
             }
         }
 
-        /* Mobile View Specifics */
         @media (max-width: 991.98px) {
             .sidebar {
                 order: 2;
@@ -59,7 +61,7 @@
             .preview-area {
                 order: 1;
                 height: 350px;
-                background: #1a1d20;
+                background: #120d1d;
                 position: sticky;
                 top: 0;
                 z-index: 1020;
@@ -75,8 +77,31 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(111, 66, 193, 0.3);
             background-color: #000;
+        }
+
+        /* Navbar Custom */
+        .navbar-purple {
+            background-color: var(--dark-purple) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
         }
 
         /* Theme Grid */
@@ -105,13 +130,13 @@
             border-color: var(--primary-color);
             transform: scale(1.1);
             z-index: 1;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            box-shadow: 0 4px 12px rgba(111, 66, 193, 0.4);
         }
 
         .section-title {
             font-size: 0.7rem;
             font-weight: 800;
-            color: #6c757d;
+            color: #8c82a1;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 1rem;
@@ -127,8 +152,12 @@
             background: #eee;
         }
 
+        /* Custom Range Input */
+        .form-range::-webkit-slider-thumb { background: var(--primary-color); }
+        .form-range::-moz-range-thumb { background: var(--primary-color); }
+
         #empty-prompt {
-            color: #6c757d;
+            color: #8c82a1;
             font-weight: bold;
             text-align: center;
             text-transform: uppercase;
@@ -138,11 +167,10 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-purple shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand fw-black d-flex align-items-center" href="#">
-                <span class="badge bg-primary me-2">G</span> GTX NEWS <span class="text-primary ms-1">PRO</span>
+                <span class="badge bg-primary me-2">G</span> GTX NEWS <span class="text-primary ms-1">VIOLET</span>
             </a>
             <button id="btnDownload" class="btn btn-primary btn-sm fw-bold px-3">
                 SIMPAN GAMBAR
@@ -151,16 +179,13 @@
     </nav>
 
     <div class="app-wrapper">
-        <!-- PREVIEW (Top on Mobile, Right on Desktop) -->
         <div class="preview-area">
             <canvas id="mainCanvas"></canvas>
             <div id="empty-prompt">Pilih Foto Background</div>
         </div>
 
-        <!-- SIDEBAR (Bottom on Mobile, Left on Desktop) -->
         <div class="sidebar p-3 p-lg-4">
             
-            <!-- Media Upload -->
             <div class="mb-4">
                 <h6 class="section-title">1. Unggah Media</h6>
                 <div class="row g-2">
@@ -175,7 +200,6 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="mb-4">
                 <h6 class="section-title">2. Isi Konten</h6>
                 <div class="mb-2">
@@ -184,15 +208,11 @@
                 <textarea id="inpHeadline" rows="3" class="form-control form-control-sm fw-bold" placeholder="Headline Berita">Masyarakat Antusias Menyambut Era Baru Transformasi Digital 2026</textarea>
             </div>
 
-            <!-- Themes Grid -->
             <div class="mb-4">
-                <h6 class="section-title">3. Tema (20 Pilihan)</h6>
-                <div id="themeContainer" class="theme-grid">
-                    <!-- Themes generated by JS -->
-                </div>
+                <h6 class="section-title">3. Tema Berita (20 Pilihan)</h6>
+                <div id="themeContainer" class="theme-grid"></div>
             </div>
 
-            <!-- Adjustments -->
             <div class="mb-4">
                 <h6 class="section-title">4. Pengaturan</h6>
                 <div class="row g-3">
@@ -221,183 +241,185 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const canvas = document.getElementById('mainCanvas');
-const ctx = canvas.getContext('2d');
-const emptyPrompt = document.getElementById('empty-prompt');
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const emptyPrompt = document.getElementById('empty-prompt');
 
-let imgBg = null;
-let imgLogo = null;
+    let imgBg = null;
+    let imgLogo = null;
 
-// 20 Professional Gradient Themes
-const themes = [
-    { id: 1, name: "Deep Blue", colors: ["#000428", "#004e92"], text: "#ffffff", label: "#00d2ff", op: 0.95, radius: 15, font: "Inter" },
-    { id: 2, name: "Sunset", colors: ["#f12711", "#f5af19"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Oswald" },
-    { id: 3, name: "Emerald", colors: ["#11998e", "#38ef7d"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 15, font: "Inter" },
-    { id: 4, name: "Cyber", colors: ["#8e2de2", "#4a00e0"], text: "#ffffff", label: "#00f2ff", op: 0.9, radius: 10, font: "Oswald" },
-    { id: 5, name: "Crimson", colors: ["#870000", "#190a05"], text: "#ffffff", label: "#ff0000", op: 0.95, radius: 0, font: "Roboto Condensed" },
-    { id: 6, name: "Midnight", colors: ["#232526", "#414345"], text: "#ffffff", label: "#0d6efd", op: 0.9, radius: 15, font: "Inter" },
-    { id: 7, name: "Flow", colors: ["#1CB5E0", "#000851"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 25, font: "Inter" },
-    { id: 8, name: "Candy", colors: ["#ee0979", "#ff6a00"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Oswald" },
-    { id: 9, name: "Frost", colors: ["#00d2ff", "#3a7bd5"], text: "#ffffff", label: "#ffffff", op: 0.85, radius: 30, font: "Inter" },
-    { id: 10, name: "Lush", colors: ["#56ab2f", "#a8e063"], text: "#ffffff", label: "#000000", op: 0.9, radius: 15, font: "Inter" },
-    { id: 11, name: "Royal", colors: ["#141E30", "#243B55"], text: "#ffffff", label: "#ffc107", op: 0.95, radius: 10, font: "Roboto Condensed" },
-    { id: 12, name: "Mauve", colors: ["#42275a", "#734b6d"], text: "#ffffff", label: "#f8f9fa", op: 0.9, radius: 15, font: "Inter" },
-    { id: 13, name: "Steel", colors: ["#1f1c2c", "#928dab"], text: "#ffffff", label: "#00d2ff", op: 0.9, radius: 5, font: "Oswald" },
-    { id: 14, name: "Peach", colors: ["#ed4264", "#ffedbc"], text: "#333333", label: "#ed4264", op: 0.9, radius: 20, font: "Inter" },
-    { id: 15, name: "Void", colors: ["#000000", "#434343"], text: "#ffffff", label: "#ffffff", op: 0.95, radius: 0, font: "Roboto Condensed" },
-    { id: 16, name: "Passion", colors: ["#e52d27", "#b31217"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 12, font: "Inter" },
-    { id: 17, name: "Electric", colors: ["#4776E6", "#8E54E9"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Inter" },
-    { id: 18, name: "Gold", colors: ["#bf953f", "#fcf6ba", "#b38728", "#fbf5b7", "#aa771c"], text: "#000000", label: "#000000", op: 0.95, radius: 10, font: "Oswald" },
-    { id: 19, name: "Messenger", colors: ["#0084ff", "#00c6ff"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 25, font: "Inter" },
-    { id: 20, name: "Moria", colors: ["#16222A", "#3A6073"], text: "#ffffff", label: "#00d2ff", op: 0.9, radius: 15, font: "Inter" }
-];
+    // 20 Professional Gradient Themes
+    const themes = [
+        { id: 1, name: "Deep Blue", colors: ["#000428", "#004e92"], text: "#ffffff", label: "#00d2ff", op: 0.95, radius: 15, font: "Inter" },
+        { id: 2, name: "Sunset", colors: ["#f12711", "#f5af19"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Oswald" },
+        { id: 3, name: "Emerald", colors: ["#11998e", "#38ef7d"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 15, font: "Inter" },
+        { id: 4, name: "Cyber", colors: ["#8e2de2", "#4a00e0"], text: "#ffffff", label: "#00f2ff", op: 0.9, radius: 10, font: "Oswald" },
+        { id: 5, name: "Crimson", colors: ["#870000", "#190a05"], text: "#ffffff", label: "#ff0000", op: 0.95, radius: 0, font: "Roboto Condensed" },
+        { id: 6, name: "Midnight", colors: ["#232526", "#414345"], text: "#ffffff", label: "#0d6efd", op: 0.9, radius: 15, font: "Inter" },
+        { id: 7, name: "Flow", colors: ["#1CB5E0", "#000851"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 25, font: "Inter" },
+        { id: 8, name: "Candy", colors: ["#ee0979", "#ff6a00"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Oswald" },
+        { id: 9, name: "Frost", colors: ["#00d2ff", "#3a7bd5"], text: "#ffffff", label: "#ffffff", op: 0.85, radius: 30, font: "Inter" },
+        { id: 10, name: "Lush", colors: ["#56ab2f", "#a8e063"], text: "#ffffff", label: "#000000", op: 0.9, radius: 15, font: "Inter" },
+        { id: 11, name: "Royal", colors: ["#141E30", "#243B55"], text: "#ffffff", label: "#ffc107", op: 0.95, radius: 10, font: "Roboto Condensed" },
+        { id: 12, name: "Mauve", colors: ["#42275a", "#734b6d"], text: "#ffffff", label: "#f8f9fa", op: 0.9, radius: 15, font: "Inter" },
+        { id: 13, name: "Steel", colors: ["#1f1c2c", "#928dab"], text: "#ffffff", label: "#00d2ff", op: 0.9, radius: 5, font: "Oswald" },
+        { id: 14, name: "Peach", colors: ["#ed4264", "#ffedbc"], text: "#333333", label: "#ed4264", op: 0.9, radius: 20, font: "Inter" },
+        { id: 15, name: "Void", colors: ["#000000", "#434343"], text: "#ffffff", label: "#ffffff", op: 0.95, radius: 0, font: "Roboto Condensed" },
+        { id: 16, name: "Passion", colors: ["#e52d27", "#b31217"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 12, font: "Inter" },
+        { id: 17, name: "Electric", colors: ["#4776E6", "#8E54E9"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 20, font: "Inter" },
+        { id: 18, name: "Gold", colors: ["#bf953f", "#fcf6ba", "#b38728", "#fbf5b7", "#aa771c"], text: "#000000", label: "#000000", op: 0.95, radius: 10, font: "Oswald" },
+        { id: 19, name: "Messenger", colors: ["#0084ff", "#00c6ff"], text: "#ffffff", label: "#ffffff", op: 0.9, radius: 25, font: "Inter" },
+        { id: 20, name: "Moria", colors: ["#16222A", "#3A6073"], text: "#ffffff", label: "#00d2ff", op: 0.9, radius: 15, font: "Inter" }
+    ];
 
-let activeTheme = themes[0];
+    let activeTheme = themes[0];
 
-function initThemes() {
-    const container = document.getElementById('themeContainer');
-    themes.forEach((t, i) => {
-        const div = document.createElement('div');
-        div.className = `theme-item ${i === 0 ? 'active' : ''}`;
-        div.style.background = `linear-gradient(135deg, ${t.colors[0]}, ${t.colors[1]})`;
-        div.style.color = t.text;
-        div.innerText = "Aa";
-        div.onclick = () => {
-            document.querySelectorAll('.theme-item').forEach(el => el.classList.remove('active'));
-            div.classList.add('active');
-            activeTheme = t;
-            render();
+    function initThemes() {
+        const container = document.getElementById('themeContainer');
+        themes.forEach((t, i) => {
+            const div = document.createElement('div');
+            div.className = `theme-item ${i === 0 ? 'active' : ''}`;
+            div.style.background = `linear-gradient(135deg, ${t.colors[0]}, ${t.colors[1]})`;
+            div.style.color = t.text;
+            div.innerText = "Aa";
+            div.onclick = () => {
+                document.querySelectorAll('.theme-item').forEach(el => el.classList.remove('active'));
+                div.classList.add('active');
+                activeTheme = t;
+                render();
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function render() {
+        if (!imgBg) {
+            emptyPrompt.style.display = 'block';
+            canvas.style.display = 'none';
+            return;
+        }
+        emptyPrompt.style.display = 'none';
+        canvas.style.display = 'block';
+
+        canvas.width = imgBg.width;
+        canvas.height = imgBg.height;
+        const scale = canvas.width / 1080;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(imgBg, 0, 0, canvas.width, canvas.height);
+
+        const label = document.getElementById('inpLabel').value.toUpperCase();
+        const headline = document.getElementById('inpHeadline').value;
+        const hSize = parseInt(document.getElementById('rangeSize').value) * scale;
+        const margin = parseInt(document.getElementById('rangeMargin').value) * scale;
+        const pos = document.getElementById('inpPos').value;
+        const logoSize = parseInt(document.getElementById('rangeLogo').value) * scale;
+        const padding = 50 * scale;
+
+        const boxWidth = canvas.width - (margin * 2);
+        const logoAreaWidth = imgLogo ? (logoSize + padding) : 0;
+        const textWidth = boxWidth - (padding * 2) - logoAreaWidth;
+
+        ctx.font = `bold ${hSize}px ${activeTheme.font}, sans-serif`;
+        const words = headline.split(' ');
+        const lines = [];
+        let currentLine = '';
+        for(let n=0; n<words.length; n++) {
+            let test = currentLine + words[n] + ' ';
+            if(ctx.measureText(test).width > textWidth && n > 0) {
+                lines.push(currentLine);
+                currentLine = words[n] + ' ';
+            } else { currentLine = test; }
+        }
+        lines.push(currentLine);
+
+        const labelSize = hSize * 0.4;
+        const headHeight = lines.length * (hSize * 1.2);
+        let finalLogoHeight = imgLogo ? (imgLogo.height / imgLogo.width) * logoSize : 0;
+        const contentHeight = Math.max(headHeight + (label ? labelSize * 1.8 : 0), finalLogoHeight);
+        const boxHeight = contentHeight + (padding * 2);
+        
+        let boxY = (pos === 'top') ? margin : (canvas.height - margin - boxHeight);
+
+        const grd = ctx.createLinearGradient(margin, boxY, margin + boxWidth, boxY + boxHeight);
+        activeTheme.colors.forEach((color, index) => {
+            grd.addColorStop(index / (activeTheme.colors.length - 1), color);
+        });
+
+        ctx.globalAlpha = activeTheme.op;
+        ctx.fillStyle = grd;
+        const radius = (activeTheme.radius || 0) * scale;
+        ctx.beginPath();
+        if(ctx.roundRect) ctx.roundRect(margin, boxY, boxWidth, boxHeight, radius);
+        else ctx.rect(margin, boxY, boxWidth, boxHeight);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+
+        if(imgLogo) {
+            const lw = logoSize;
+            const lh = finalLogoHeight;
+            const lx = margin + boxWidth - lw - padding;
+            const ly = boxY + (boxHeight / 2) - (lh / 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.beginPath();
+            if(ctx.roundRect) ctx.roundRect(lx - 10, ly - 10, lw + 20, lh + 20, 10 * scale);
+            ctx.fill();
+            ctx.drawImage(imgLogo, lx, ly, lw, lh);
+        }
+
+        let textY = boxY + padding;
+        ctx.textBaseline = 'top';
+
+        if(label) {
+            ctx.font = `900 ${labelSize}px ${activeTheme.font}, sans-serif`;
+            ctx.fillStyle = activeTheme.label;
+            ctx.fillText(label, margin + padding, textY);
+            textY += labelSize * 1.6;
+        }
+
+        ctx.font = `bold ${hSize}px ${activeTheme.font}, sans-serif`;
+        ctx.fillStyle = activeTheme.text;
+        lines.forEach(l => {
+            ctx.fillText(l.trim(), margin + padding, textY);
+            textY += hSize * 1.2;
+        });
+    }
+
+    function setupFile(id, cb) {
+        document.getElementById(id).onchange = (e) => {
+            const f = e.target.files[0];
+            if(!f) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const i = new Image();
+                i.onload = () => { cb(i); render(); };
+                i.src = ev.target.result;
+            };
+            r.readAsDataURL(f);
         };
-        container.appendChild(div);
-    });
-}
-
-function render() {
-    if (!imgBg) {
-        emptyPrompt.style.display = 'block';
-        canvas.style.display = 'none';
-        return;
     }
-    emptyPrompt.style.display = 'none';
-    canvas.style.display = 'block';
 
-    canvas.width = imgBg.width;
-    canvas.height = imgBg.height;
-    const scale = canvas.width / 1080;
+    setupFile('bgInput', i => imgBg = i);
+    setupFile('logoInput', i => imgLogo = i);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imgBg, 0, 0, canvas.width, canvas.height);
-
-    const label = document.getElementById('inpLabel').value.toUpperCase();
-    const headline = document.getElementById('inpHeadline').value;
-    const hSize = parseInt(document.getElementById('rangeSize').value) * scale;
-    const margin = parseInt(document.getElementById('rangeMargin').value) * scale;
-    const pos = document.getElementById('inpPos').value;
-    const logoSize = parseInt(document.getElementById('rangeLogo').value) * scale;
-    const padding = 50 * scale;
-
-    const boxWidth = canvas.width - (margin * 2);
-    const textWidth = boxWidth - (padding * 2);
-
-    ctx.font = `bold ${hSize}px ${activeTheme.font}, sans-serif`;
-    const words = headline.split(' ');
-    const lines = [];
-    let currentLine = '';
-    for(let n=0; n<words.length; n++) {
-        let test = currentLine + words[n] + ' ';
-        if(ctx.measureText(test).width > textWidth && n > 0) {
-            lines.push(currentLine);
-            currentLine = words[n] + ' ';
-        } else { currentLine = test; }
-    }
-    lines.push(currentLine);
-
-    const labelSize = hSize * 0.4;
-    const headHeight = lines.length * (hSize * 1.2);
-    const boxHeight = headHeight + (label ? labelSize * 1.8 : 0) + (padding * 2);
-    let boxY = (pos === 'top') ? margin : (canvas.height - margin - boxHeight);
-
-    // DRAW GRADIENT BOX
-    const grd = ctx.createLinearGradient(margin, boxY, margin + boxWidth, boxY + boxHeight);
-    activeTheme.colors.forEach((color, index) => {
-        grd.addColorStop(index / (activeTheme.colors.length - 1), color);
+    ['inpLabel', 'inpHeadline', 'rangeSize', 'rangeMargin', 'inpPos', 'rangeLogo'].forEach(id => {
+        document.getElementById(id).oninput = render;
     });
 
-    ctx.globalAlpha = activeTheme.op;
-    ctx.fillStyle = grd;
-    const radius = (activeTheme.radius || 0) * scale;
-    ctx.beginPath();
-    if(ctx.roundRect) ctx.roundRect(margin, boxY, boxWidth, boxHeight, radius);
-    else ctx.rect(margin, boxY, boxWidth, boxHeight);
-    ctx.fill();
-    ctx.globalAlpha = 1.0;
-
-    // DRAW LOGO (Inside Box - Right Corner)
-    if(imgLogo) {
-        const ratio = imgLogo.height / imgLogo.width;
-        const lw = logoSize;
-        const lh = lw * ratio;
-        const lx = margin + boxWidth - lw - padding;
-        const ly = boxY + padding;
-        ctx.drawImage(imgLogo, lx, ly, lw, lh);
-    }
-
-    // DRAW TEXT
-    let textY = boxY + padding;
-    ctx.textBaseline = 'top';
-
-    if(label) {
-        ctx.font = `900 ${labelSize}px ${activeTheme.font}, sans-serif`;
-        ctx.fillStyle = activeTheme.label;
-        ctx.fillText(label, margin + padding, textY);
-        textY += labelSize * 1.6;
-    }
-
-    ctx.font = `bold ${hSize}px ${activeTheme.font}, sans-serif`;
-    ctx.fillStyle = activeTheme.text;
-    lines.forEach(l => {
-        ctx.fillText(l.trim(), margin + padding, textY);
-        textY += hSize * 1.2;
-    });
-}
-
-function setupFile(id, cb) {
-    document.getElementById(id).onchange = (e) => {
-        const f = e.target.files[0];
-        if(!f) return;
-        const r = new FileReader();
-        r.onload = (ev) => {
-            const i = new Image();
-            i.onload = () => { cb(i); render(); };
-            i.src = ev.target.result;
-        };
-        r.readAsDataURL(f);
+    document.getElementById('btnDownload').onclick = () => {
+        if(!imgBg) return;
+        const link = document.createElement('a');
+        link.download = `News-GTX-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
     };
-}
 
-setupFile('bgInput', i => imgBg = i);
-setupFile('logoInput', i => imgLogo = i);
-
-['inpLabel', 'inpHeadline', 'rangeSize', 'rangeMargin', 'inpPos', 'rangeLogo'].forEach(id => {
-    document.getElementById(id).oninput = render;
-});
-
-document.getElementById('btnDownload').onclick = () => {
-    if(!imgBg) return;
-    const link = document.createElement('a');
-    link.download = `News-GTX-${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png', 1.0);
-    link.click();
-};
-
-window.onload = () => {
-    initThemes();
-    render();
-};
-
+    window.onload = () => {
+        initThemes();
+        render();
+    };
 </script>
 </body>
 </html>
